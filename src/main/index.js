@@ -84,7 +84,7 @@ app.on('will-quit', e => {
     console.log('will-quit')
   }
   e.preventDefault()
-  stopAll().then(() => {
+  stopAll(true).then(() => {
     destroyWindow()
     destroyTray()
     app.exit(0)

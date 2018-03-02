@@ -5,8 +5,19 @@ import { checkUpdate } from './updater'
 import { getTasks } from './task'
 import { isMac, isWin } from '../shared/env'
 import { trayIcon } from '../shared/icon'
+import { isArray } from '../shared/utils'
 
 let tray
+
+function isScriptRunning (tasks, projectPath, script) {
+  if (!isArray(script)) {
+    return tasks[projectPath] && !!tasks[projectPath][script]
+  } else {
+    return tasks[projectPath] && script.every(s => {
+      return !!tasks[projectPath][s]
+    })
+  }
+}
 
 /**
  * 根据应用配置生成菜单
@@ -25,14 +36,35 @@ function generateMenus (appConfig) {
     { label: '退出', click: handler.exitApp }
   ]
   const projectMenus = []
+  // 获取当前执行中的任务
+  const tasks = getTasks()
   if (appConfig.projects && appConfig.projects.length) {
     appConfig.projects.forEach(project => {
-      projectMenus.push({
-        label: project.name, submenu: [
-          { label: '启动' },
-          { label: '结束' }
+      const projectMenu = { label: project.name }
+      // 单脚本
+      if (project.scripts.length === 1) {
+        // 该脚本是否正在执行中
+        const isRunning = isScriptRunning(tasks, project.path, project.scripts[0])
+        projectMenu.submenu = [
+          { label: '启动', disabled: isRunning, click: handler.startScript(project.path, project.scripts) },
+          { label: '结束', disabled: !isRunning, click: handler.stopScript(project.path, project.scripts) }]
+      } else {
+        // 多脚本
+        const isAllRunning = isScriptRunning(tasks, project.path, project.scripts)
+        projectMenu.submenu = [
+          { label: '全部启动', disabled: isAllRunning, click: handler.startScript(project.path, project.scripts) },
+          { label: '全部结束', disabled: !isAllRunning, click: handler.stopScript(project.path, project.scripts) },
+          { type: 'separator' }
         ]
-      })
+        project.scripts.forEach(script => {
+          // 该脚本是否正在执行中
+          const isRunning = isScriptRunning(tasks, project.path, project.scripts[0])
+          projectMenu.submenu.push({ label: script, submenu: [
+            { label: '启动', disabled: isRunning, click: handler.startScript(project.path, script) },
+            { label: '结束', disabled: !isRunning, click: handler.stopScript(project.path, script) }
+          ] })
+        })
+      }
     })
     projectMenus.push({ type: 'separator' })
   }

@@ -22,6 +22,10 @@ ipcRenderer.on(events.EVENT_APP_NOTIFY_MAIN, (e, { title, body }) => {
 }).on(events.EVENT_APP_LOG_CONSOLE, (e, data) => {
   // 任务执行日志
   store.commit('addLog', data)
+}).on(events.EVENT_TASK_START_SCRIPT, (e, project, script) => {
+  // 启动任务，支持多任务
+}).on(events.EVENT_TASK_STOP_SCRIPT, (e, project, script) => {
+  // 结束任务，支持多任务
 })
 
 /**

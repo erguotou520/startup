@@ -10,8 +10,8 @@ import { EVENT_APP_LOG_CONSOLE } from '../shared/events'
  * {
  *  project: {
  *    script: {
- *      closed: false,
- *      child
+ *      closed,
+ *      pid
  *    }
  *  }
  * }
@@ -21,7 +21,7 @@ const tasks = {}
  * {
  *   pid: {
  *     closed,
- *     child
+ *     pid
  *   }
  * }
  */
@@ -68,7 +68,6 @@ function runCommand (projectPath, script) {
         type: 'close', pid: child.pid
       })
     })
-    console.log(child)
     return child
   }
 }
@@ -76,13 +75,19 @@ function runCommand (projectPath, script) {
 /**
  * 结束command的后台运行
  */
-async function stop (child, timeout = 5000, force = false) {
-  if (child && child.pid) {
+async function stop (pid, timeout = 5000, force = false) {
+  if (pid) {
     return new Promise(resolve => {
-      treeKill(child.pid, 'SIGKILL', err => {
+      const _timeout = setTimeout(() => {
+        logger.error(`进程 ${pid} 可能无法关闭`)
+        !force && showNotification(`进程 ${pid} 可能无法关闭，尝试手动关闭`)
+        resolve()
+      }, timeout)
+      treeKill(pid, 'SIGKILL', err => {
+        clearTimeout(_timeout)
         if (err) {
-          logger.error(`进程 ${child.pid} 可能无法关闭`)
-          !force && showNotification(`进程 ${child.pid} 可能无法关闭，尝试手动关闭`)
+          logger.error(`进程 ${pid} 关闭出错\n${err}`)
+          !force && showNotification(`进程 ${pid} 关闭出错，尝试手动关闭\n${err}`)
         }
         resolve()
       })
@@ -104,14 +109,14 @@ export function startTask (projectPath, scripts) {
         // 任务已存在
         return
       } else {
-        tasks[projectPath][script] = { closed: false, child: null }
+        tasks[projectPath][script] = { closed: false }
       }
     } else {
-      tasks[projectPath] = { [script]: { closed: false, child: null }}
+      tasks[projectPath] = { [script]: { closed: false }}
     }
     const child = runCommand(projectPath, script)
     if (child) {
-      Object.assign(tasks[projectPath][script], { child })
+      Object.assign(tasks[projectPath][script], { pid: child.pid })
       pidMap[child.pid] = tasks[projectPath][script]
       pid2script[child.pid] = [projectPath, script]
       return child.pid
@@ -125,7 +130,7 @@ export function startTask (projectPath, scripts) {
  * @param {Number} pid pid
  */
 export function stopTask (pid) {
-  const promise = pidMap[pid] ? stop(pidMap[pid].child) : Promise.resolve()
+  const promise = pidMap[pid] ? stop(pidMap[pid].pid) : Promise.resolve()
   return promise.then(() => {
     delete tasks[pid2script[pid][0]][pid2script[pid][1]]
     delete pidMap[pid]
@@ -140,7 +145,7 @@ export function stopTask (pid) {
 export function stopAll (force = false) {
   if (Object.keys(pidMap).length > 0) {
     return Promise.all(Object.keys(pidMap).map(pid => {
-      return stop(pidMap[pid].child, 8000, force)
+      return stop(pidMap[pid].pid, 8000, force)
     }))
   }
   return Promise.resolve()

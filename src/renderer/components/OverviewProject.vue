@@ -21,9 +21,8 @@
   </div>
 </template>
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import SelectableBtn from '../components/SelectableBtn'
-import { startTask } from '../ipc'
 export default {
   props: {
     project: Object
@@ -54,14 +53,19 @@ export default {
     SelectableBtn
   },
   methods: {
-    ...mapMutations(['addTask', 'stopTask']),
-    start (project, script) {
-      const pids = startTask(project.path, [script])
-      if (pids && pids[0]) {
-        this.addTask({ projectPath: project.path, script, pid: pids[0] })
-        this.$Message.success(`线程${pids[0]}正在运行`)
+    ...mapActions(['startTask', 'stopTask']),
+    start (projectPath, script) {
+      const pids = this.startTask({ projectPath, script })
+      if (!pids.length) {
+        this.$Message.error('命令执行出错')
       } else {
-        this.$Message.error('Something error')
+        pids.forEach(pid => {
+          if (pid) {
+            this.$Message.success(`线程${pids[0]}正在运行`)
+          } else {
+            this.$Message.error('命令执行出错')
+          }
+        })
       }
     },
     stop (projectPath, script) {

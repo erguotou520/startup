@@ -32,10 +32,7 @@ ipcMain.on(events.EVENT_APP_ERROR_RENDER, e => {
   Object.keys(tasks).forEach(project => {
     sendTasks[project] = {}
     Object.keys(tasks[project]).forEach(script => {
-      sendTasks[project][script] = {
-        closed: tasks[project][script].closed,
-        pid: tasks[project][script].child.pid
-      }
+      sendTasks[project][script] = tasks[project][script]
     })
   })
   e.returnValue = {
