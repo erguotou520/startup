@@ -55,6 +55,6 @@ export default {
     &.ivu-menu-item-active
     &.ivu-menu-item-selected
       color #fff !important
-      background-color $color-logo !important
+      background-color $color-primary !important
       border-right none !important
 </style>

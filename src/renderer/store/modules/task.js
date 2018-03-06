@@ -53,10 +53,12 @@ const mutations = {
   },
   // 添加运行日志
   addLog (state, { pid, type, content }) {
-    if (type === 'close') {
-      state.pidMap[pid].closed = true
-    } else {
-      state.pidMap[pid].logs.push({ type, content })
+    if (state.pidMap[pid]) {
+      if (type === 'close') {
+        state.pidMap[pid].closed = true
+      } else {
+        state.pidMap[pid].logs.push({ type, content })
+      }
     }
   }
 }

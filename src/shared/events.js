@@ -28,6 +28,9 @@ export const EVENT_APP_SCRIPT_STOP = 'app.script.stop'
 // 由`ipc-main`发出 项目运行的console内容
 export const EVENT_APP_LOG_CONSOLE = 'app.log.console'
 
+// 由`ipc-renderer`发出 在IDE中打开项目
+export const EVENT_APP_OPEN_IDE = 'app.open.ide'
+
 // 由`ipc-main`发出 同步`rx`数据
 export const EVENT_RX_SYNC_MAIN = 'rx.sync.main'
 

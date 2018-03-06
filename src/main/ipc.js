@@ -6,6 +6,7 @@ import { updateAppConfig } from './data'
 import { startTask, stopTask, getTasks } from './task'
 import { hideWindow } from './window'
 import { showNotification } from './notification'
+import { openIDE } from './ide'
 import defaultConfig, { mergeConfig } from '../shared/config'
 import logger from './logger'
 
@@ -57,4 +58,6 @@ ipcMain.on(events.EVENT_APP_ERROR_RENDER, e => {
 }).on(events.EVENT_APP_SCRIPT_STOP, (e, pid) => {
   // 结束任务
   stopTask(pid)
+}).on(events.EVENT_APP_OPEN_IDE, (e, projectPath) => {
+  openIDE(projectPath)
 })

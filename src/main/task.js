@@ -135,6 +135,7 @@ export function stopTask (pid) {
     delete tasks[pid2script[pid][0]][pid2script[pid][1]]
     delete pidMap[pid]
     delete pid2script[pid]
+    console.log(Object.keys(tasks[pid2script[pid][0]]))
   })
 }
 

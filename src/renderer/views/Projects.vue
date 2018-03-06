@@ -68,7 +68,7 @@ export default {
     .script
       display inline-block
       max-width 100%
-      border-bottom 1px solid $color-logo
+      border-bottom 1px solid $color-primary
   .add-card
     height 127px
     border-style dashed

@@ -196,7 +196,6 @@ export default {
       this.$refs.form.validate(valid => {
         if (valid) {
           if (this.isEdit) {
-            console.log(getUpdatedKeys(this.form.projects[0], this.$route.query))
             // 有修改
             if (getUpdatedKeys(this.form.projects[0], this.$route.query).length) {
               this.updateProject([this.editIndex, this.form.projects[0]])

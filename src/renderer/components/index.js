@@ -3,7 +3,7 @@ import { Row, Col } from 'iview/src/components/grid'
 import { Select, Option, OptionGroup } from 'iview/src/components/select'
 import ExternalLink from './ExternalLink'
 import ModuleHeader from './ModuleHeader'
-import 'iview/dist/styles/iview.css'
+import '../assets/custom.less'
 
 import {
   Alert,

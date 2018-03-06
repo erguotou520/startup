@@ -1,4 +1,5 @@
 import { app, Menu } from 'electron'
+import { appConfig$ } from './data'
 import { isMac } from '../shared/env'
 
 /**
@@ -30,3 +31,10 @@ export default function renderMenu () {
     Menu.setApplicationMenu(Menu.buildFromTemplate(template))
   }
 }
+
+appConfig$.subscribe(data => {
+  const [, changed] = data
+  if (!changed.length) {
+    renderMenu()
+  }
+})

@@ -3,6 +3,8 @@ const defaultConfig = {
   projects: [],
   // 开机自启动
   autoLaunch: false,
+  // 自启动脚本
+  autoLaunchScripts: [],
   // 默认IDE工具
   defaultIDE: 'vscode'
 }

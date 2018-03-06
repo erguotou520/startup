@@ -66,3 +66,10 @@ export function startTask (projectPath, scripts) {
 export function stopTask (pid) {
   ipcRenderer.send(events.EVENT_APP_SCRIPT_STOP, pid)
 }
+
+/**
+ * 在IDE中打开
+ */
+export function openInIDE (projectPath) {
+  ipcRenderer.send(events.EVENT_APP_OPEN_IDE, projectPath)
+}

@@ -25,6 +25,7 @@ function isScriptRunning (tasks, projectPath, script) {
  */
 function generateMenus (appConfig) {
   const base = [
+    { label: '打开主页面', click: handler.showMainWindow },
     { label: '帮助', submenu: [
       { label: '检查更新', click: () => checkUpdate(true) },
       { label: '查看日志', click: handler.openLog },
@@ -65,10 +66,11 @@ function generateMenus (appConfig) {
           ] })
         })
       }
+      projectMenus.push(projectMenu)
     })
     projectMenus.push({ type: 'separator' })
   }
-  return [{ label: '打开主页面', click: handler.showMainWindow }, { type: 'separator' }].concat(projectMenus).concat(base)
+  return projectMenus.concat(base)
 }
 
 // 根据配置显示tray tooltip
